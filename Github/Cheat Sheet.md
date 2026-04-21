@@ -12,7 +12,7 @@ This is a reference list of the most commonly used Git commands. (You might cons
 
 The basic Git syntax is `program | action | destination`.
 
-For example,
+For example:
 
 - `git add .` is read as `git | add | .`, where the period represents everything in the current directory;
 - `git commit -m "message"` is read as `git | commit -m | "message"`; and
