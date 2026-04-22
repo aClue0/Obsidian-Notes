@@ -69,4 +69,6 @@ git add -A
 git commit -m "Moved root to Projects directory"
 ```
 
-*Note:* If you have a `.gitignore` file make sure to mv it as well!
+*Notes:* 
+- If you have a `.gitignore` file make sure to mv it as well!
+- If any of the files has a path related to the path you changed, it won't work so make sure after you change the root that you check the paths inside the project
