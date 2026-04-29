@@ -72,3 +72,180 @@ git commit -m "Moved root to Projects directory"
 *Notes:* 
 - If you have a `.gitignore` file make sure to mv it as well!
 - If any of the files has a path related to the path you changed, it won't work so make sure after you change the root that you check the paths inside the project
+
+# Push & Pull Errors
+Sometimes the main branch on your remote is ahead of the local main.
+
+It will sometimes give you an error that looks like this:
+
+```shell
+❯ git push
+To github.com:aClue0/Odin-Projects.git
+ ! [rejected]        main -> main (non-fast-forward)
+error: failed to push some refs to 'github.com:aClue0/Odin-Projects.git'
+hint: Updates were rejected because the tip of your current branch is behind
+hint: its remote counterpart. If you want to integrate the remote changes,
+hint: use 'git pull' before pushing again.
+hint: See the 'Note about fast-forwards' in 'git push --help' for details.
+```
+
+This means that:
+- Your local `main` has **1 commit** that the remote doesn’t have.
+- The remote `origin/main` has **2 commits** that you don’t have.
+- Git refuses to push because it would overwrite history.
+
+## How to solve this?
+To answer this question you have to understand 4 things:
+1. `git fetch`
+2. `git pull`
+3. The difference between `rebase` and `merge`
+4. `git pull --rebase origin main`
+## Firstly what does **`git fetch`** do?
+It basically means, download the changes made in the origin/main (remote repository) but **don't** merge them. 
+
+After `git fetch`:
+
+Git updates a **separate pointer** called:
+
+```
+origin/main
+```
+
+So now you effectively have **two versions** of the branch:
+
+- `main` -> your local branch (your 1 commit)
+- `origin/main` -> the remote version (those 2 commits)
+
+> These are just two different timelines you can compare.
+
+**So, How can you compare?**
+#### 1. See commits you don’t have
+
+```
+git log main..origin/main
+```
+
+- This shows commits that exist on the remote but not locally
+#### 2. See what changed (actual code)
+
+```
+git diff main origin/main
+```
+
+ - This shows line-by-line differences between your branch and the remote
+#### 3. Visual graph  (Sometimes helpful)
+
+```
+git log --oneline --graph --all
+```
+
+You’ll see something like:
+
+```
+* (origin/main) Remote commit 2
+* Remote commit 1
+| * (main) Your commit
+|/
+* Older shared commit
+```
+
+- This clears the confusion and the divergence obvious. Maybe there's even more than yours and the remote commit? This just helps.
+#### 4. Inspect a specific remote commit
+From the `git log` output, grab a commit hash:
+
+```
+git show <commit-hash>
+```
+### So to do this you:
+
+```shell
+git fetch
+# git log main..origin/main (optional)
+git diff main origin/main
+```
+
+ > After than you decide what to do
+
+**If it looks good:**
+
+```shell
+git merge origin/main
+# or git rebase origin/main it's the same
+```
+
+
+## The difference between **`--rebase`**, **`--no-rebase`** and **`merge`**
+### rebase
+`rebase` basically means:
+	Put my commit that already exists aside, **fetch** the commits that are ahead of me on the remote repository and then get back the commit that I have. 
+So, if you have changes made on the remote "Fix typo in readme" and you have "Add style.css" in the local commit, if you `git pull --rebase`
+
+This is the output:
+![[Pasted image 20260429070147.png]]
+
+
+
+
+
+
+## **`git pull`**
+Okay now back to `git pull`, if you understand the concept of `git fetch`, what this basically does is **git fetch + git merge** both at the same time, but there's a problem:
+
+git pull fails in your case because Git doesn’t know how you want to combine two different histories.
+
+So Git is like:
+
+- “Do I merge them, or rebase them? You didn’t tell me.”
+# Initializing a Repo from a folder 
+1. When initializing a repo you firstly cd into the folder you want to push
+2. Do the first command `git init` 
+3. Then initialize the remote url with 
+
+4. ```bash
+   git remote add origin <url with ssh or html>
+   git add . 
+   git commit -m "Initial commit"
+   ```
+   
+5.  `git push -u origin main` , for this command the **`-u`** is essential for the first push, **`-u` (short for `--set-upstream`)**: is a crucial flag for your first push. It tells Git to link your local branch to the remote branch. Because you used `-u` this time, the _next_ time you have updates, you can simply type `git push` or `git pull` without having to   `origin` here is the name of the remote, we will talk about remotes in [Remotes](#remotes)
+# Remotes
+When you first initialize the url of the repo with `git remote add origin <url>` you simply tell github that the url you is named **origin**, understanding that you can do some neat stuff!
+
+If you forked a repo for example an open source project you can name:
+- **`origin`**: Your personal fork (where you push your changes).
+    
+- **`upstream`**: The original project (where you pull the latest updates from so you don't fall behind).
+
+```bash
+git remote add origin https://github.com/YOUR_NAME/cool-project.git
+git remote add upstream https://github.com/ORIGINAL_AUTHOR/cool-project.git
+```
+
+you can simply then push the code you want to either the upstream original author code, or the code you forked!
+### How to Manage Your Remotes
+Once you've added multiple remotes, here is how you interact with them:
+
+- **To see all your connected remotes:** Use the verbose flag to see exactly what nicknames go to what URLs:
+
+ ```bash
+git remote -v
+ ```
+
+- **To push to your new remote:** Instead of pushing to `origin`, you just swap out the nickname in your command:
+
+```bash
+git push something main
+```
+
+- **To pull from your new remote:**
+
+```
+git pull something main
+```
+
+
+- **To rename a remote later:** If you realize "something" isn't a descriptive enough name:
+
+```bash
+git remote rename something staging-server
+```
