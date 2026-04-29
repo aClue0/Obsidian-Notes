@@ -80,12 +80,13 @@ It will sometimes give you an error that looks like this:
 
 ```shell
 ❯ git push
-To github.com:aClue0/Odin-Projects.git
- ! [rejected]        main -> main (non-fast-forward)
-error: failed to push some refs to 'github.com:aClue0/Odin-Projects.git'
-hint: Updates were rejected because the tip of your current branch is behind
-hint: its remote counterpart. If you want to integrate the remote changes,
-hint: use 'git pull' before pushing again.
+To github.com:aClue0/Obsidian-Notes.git
+ ! [rejected]        main -> main (fetch first)
+error: failed to push some refs to 'github.com:aClue0/Obsidian-Notes.git'
+hint: Updates were rejected because the remote contains work that you do not
+hint: have locally. This is usually caused by another repository pushing to
+hint: the same ref. If you want to integrate the remote changes, use
+hint: 'git pull' before pushing again.
 hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 ```
 
@@ -97,9 +98,8 @@ This means that:
 ## How to solve this?
 To answer this question you have to understand 4 things:
 1. `git fetch`
-2. `git pull`
-3. The difference between `rebase` and `merge`
-4. `git pull --rebase origin main`
+2. The difference between `rebase` and `merge`
+3. `git pull --rebase origin main`
 ## Firstly what does **`git fetch`** do?
 It basically means, download the changes made in the origin/main (remote repository) but **don't** merge them. 
 
@@ -125,6 +125,22 @@ So now you effectively have **two versions** of the branch:
 git log main..origin/main
 ```
 
+```shell
+❯ git log main...origin/main
+commit ab2fc29f2956adf7e397d238f8bcaa1a1ddacfa4 (HEAD
+ -> main)
+Author: Hazem Magdy <1hazemmagdy@gmail.com>
+Date:   Wed Apr 29 07:05:06 2026 +0300
+
+    This commit is on Local
+
+commit c8c126e991a143da61db6c415de95efce79084af (origin
+/main, origin/HEAD)
+Author: Hazem Magdy <1hazemmagdy@gmail.com>
+Date:   Wed Apr 29 07:03:42 2026 +0300
+
+    This is a commit ahead of local
+```
 - This shows commits that exist on the remote but not locally
 #### 2. See what changed (actual code)
 
@@ -133,24 +149,7 @@ git diff main origin/main
 ```
 
  - This shows line-by-line differences between your branch and the remote
-#### 3. Visual graph  (Sometimes helpful)
-
-```
-git log --oneline --graph --all
-```
-
-You’ll see something like:
-
-```
-* (origin/main) Remote commit 2
-* Remote commit 1
-| * (main) Your commit
-|/
-* Older shared commit
-```
-
-- This clears the confusion and the divergence obvious. Maybe there's even more than yours and the remote commit? This just helps.
-#### 4. Inspect a specific remote commit
+#### 3. Inspect a specific remote commit
 From the `git log` output, grab a commit hash:
 
 ```
@@ -161,33 +160,29 @@ git show <commit-hash>
 ```shell
 git fetch
 # git log main..origin/main (optional)
-git diff main origin/main
+git show <commit-hash>
 ```
 
- > After than you decide what to do
+ > After than you decide what to do!
 
 **If it looks good:**
 
 ```shell
 git merge origin/main
-# or git rebase origin/main it's the same
 ```
 
-
-## The difference between **`--rebase`**, **`--no-rebase`** and **`merge`**
+This is the output:
+![[Pasted image 20260429071750.png]]
 ### rebase
 `rebase` basically means:
 	Put my commit that already exists aside, **fetch** the commits that are ahead of me on the remote repository and then get back the commit that I have. 
+
 So, if you have changes made on the remote "Fix typo in readme" and you have "Add style.css" in the local commit, if you `git pull --rebase`
 
 This is the output:
 ![[Pasted image 20260429070147.png]]
 
-
-
-
-
-
+Then you do git push normally!
 ## **`git pull`**
 Okay now back to `git pull`, if you understand the concept of `git fetch`, what this basically does is **git fetch + git merge** both at the same time, but there's a problem:
 
@@ -196,6 +191,10 @@ git pull fails in your case because Git doesn’t know how you want to combine t
 So Git is like:
 
 - “Do I merge them, or rebase them? You didn’t tell me.”
+
+So you do `git pull --rebase origin main` aaand you're done! 
+
+now do your `git push` And there should be no errors.
 # Initializing a Repo from a folder 
 1. When initializing a repo you firstly cd into the folder you want to push
 2. Do the first command `git init` 
