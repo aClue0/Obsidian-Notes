@@ -94,9 +94,8 @@ This means that:
 - Your local `main` has **1 commit** that the remote doesn’t have.
 - The remote `origin/main` has **2 commits** that you don’t have.
 - Git refuses to push because it would overwrite history.
-
 ## How to solve this?
-To answer this question you have to understand 4 things:
+To answer this question you have to understand 3 things:
 1. `git fetch`
 2. The difference between `rebase` and `merge`
 3. `git pull --rebase origin main`
@@ -121,7 +120,7 @@ So now you effectively have **two versions** of the branch:
 **So, How can you compare?**
 #### 1. See commits you don’t have
 
-```
+```shell
 git log main..origin/main
 ```
 
@@ -144,7 +143,7 @@ Date:   Wed Apr 29 07:03:42 2026 +0300
 - This shows commits that exist on the remote but not locally
 #### 2. See what changed (actual code)
 
-```
+```shell
 git diff main origin/main
 ```
 
@@ -152,7 +151,7 @@ git diff main origin/main
 #### 3. Inspect a specific remote commit
 From the `git log` output, grab a commit hash:
 
-```
+```shell
 git show <commit-hash>
 ```
 ### So to do this you:
@@ -160,10 +159,11 @@ git show <commit-hash>
 ```shell
 git fetch
 # git log main..origin/main (optional)
-git show <commit-hash>
+# git show <commit-hash>
+git diff main origin/main
 ```
 
- > After than you decide what to do!
+ > After that you decide what to do!
 
 **If it looks good:**
 
@@ -173,16 +173,6 @@ git merge origin/main
 
 This is the output:
 ![[Pasted image 20260429071750.png]]
-### rebase
-`rebase` basically means:
-	Put my commit that already exists aside, **fetch** the commits that are ahead of me on the remote repository and then get back the commit that I have. 
-
-So, if you have changes made on the remote "Fix typo in readme" and you have "Add style.css" in the local commit, if you `git pull --rebase`
-
-This is the output:
-![[Pasted image 20260429070147.png]]
-
-Then you do git push normally!
 ## **`git pull`**
 Okay now back to `git pull`, if you understand the concept of `git fetch`, what this basically does is **git fetch + git merge** both at the same time, but there's a problem:
 
@@ -195,6 +185,16 @@ So Git is like:
 So you do `git pull --rebase origin main` aaand you're done! 
 
 now do your `git push` And there should be no errors.
+
+`rebase` basically means:
+	Put my commit that already exists aside, **fetch** the commits that are ahead of me on the remote repository and then get back the commit that I have. 
+
+So, if you have changes made on the remote "Fix typo in readme" and you have "Add style.css" in the local commit, if you `git pull --rebase origin main`
+
+This is the output:
+![[Pasted image 20260429070147.png]]
+
+Then you do git push normally!
 # Initializing a Repo from a folder 
 1. When initializing a repo you firstly cd into the folder you want to push
 2. Do the first command `git init` 
