@@ -1,9 +1,10 @@
-CSS refers to Cascading Style Sheets!
+CSS refers to Cascading Style Sheets! and specifically The *C* refers to **Cascade**.
 
-The *C* refers to **Cascade**, The cascade is what determines which rules actually get applied to our HTML. There are different factors that the cascade uses to determine this. We will examine three of these factors, which will hopefully help you avoid those frustrating “I hate CSS” moments.
+**The cascade** is what determines which rules actually get applied to our HTML. There are different factors that the cascade uses to determine this. We will examine three of these factors, which will hopefully help you avoid those frustrating “I hate CSS” moments.
 
-And to understand it, we have to think of it like a game of conquer! Which part is more dominant and can conquer the other part?
+And to understand it, we have to think of it like a game of conquer! Which part is more dominant and can conquer the other part? It brings order in the rules (pun intended)
 
+you can jump to mistakes I made in the Assignment section [[#Mistakes I made||here]]
 # 1. Importance
 There are four basic _types_ of rules:
 
@@ -162,7 +163,7 @@ h1 {
 In this example, rule 2 would have higher specificity and the `orange` value would take precedence for this element. Rule 2 uses a type selector, which has the lowest specificity value. But rule 1 uses the universal selector (`*`) which has no specificity value.
 
 # 4. Inheritance
-Inheritance refers to certain CSS properties that, when applied to an element, are inherited by that element’s descendants, even if we don’t explicitly write a rule for those descendants. Typography-based properties (`color`, `font-size`, `font-family`, etc.) are usually inherited, while most other properties aren’t. You can find out if a property is inherited or not by going to its docs on MDN and heading to the **Formal Definition** section. For example, the [CSS `color` property formal definition](https://developer.mozilla.org/en-US/docs/Web/CSS/color#formal_definition) indicates that `color` is an inherited property, while the [`display` property formal definition](https://developer.mozilla.org/en-US/docs/Web/CSS/display#formal_definition) indicates that `display` is not.
+Inheritance refers to certain CSS properties that, when applied to an element, are inherited by that element’s descendants, even if we don’t explicitly write a rule for those descendants. Typography-based properties (`color`, `font-size`, `font-family`, etc.) are usually inherited, while most other properties aren’t. You can find out if a property is inherited or not by going to its docs on MDN and heading to the **Formal Definition** section. For example, the [CSS `color` property formal definition](https://developer.mozilla.org/en-US/docs/Web/CSS/color#formal_definition) indicates that `color` is an inherited property, while the [**`display`** property formal definition](https://developer.mozilla.org/en-US/docs/Web/CSS/display#formal_definition) indicates that `display` is not.
 
 The exception to this is when directly targeting an element, as this always beats inheritance:
 
@@ -187,7 +188,7 @@ The exception to this is when directly targeting an element, as this always beat
 ```
 
 Despite the `parent` element having a higher specificity with an ID, the `child` element would have the `color: blue` style applied since that declaration directly targets it, while `color: red` from the parent is only inherited.
-# 5. Position
+# 5. Rule Order
 The final factor, the end of the line, the tie-breaker of the tie-breakers. Let’s say that after every other factor has been taken into account, there are still multiple conflicting rules targeting an element. How does the cascade determine which rule to apply?
 
 Whichever rule was the _last_ defined is the winner.
@@ -205,3 +206,42 @@ Whichever rule was the _last_ defined is the winner.
 ```
 
 For an element that has both the `alert` and `warning` classes, the cascade would run through every other factor, including inheritance (none here) and specificity (neither rule is more specific than the other). Since the `.warning` rule was the last one defined, and no other factor was able to determine which rule to apply, it’s the one that gets applied to the element.
+
+# Mistakes I made
+You know that chaining some selectors beats just one selector right? for ex:
+
+```css
+.child {
+font-size: 15px;
+}
+
+.para{
+font-size: 20px;
+}
+```
+
+```html
+<p class="para"> This is a parent paragraph!
+	<p class="para child"> This is a child paragraph</p>
+</p>
+```
+
+This would lead to making the child paragraph with font size **20px**.
+Why? Because of the [[#5. Rule Order]] the child actually takes the `.para` font size as it came in last.
+
+How to fix it?
+There are 2 ways:
+1. You can make `.para` come in first 
+
+```css
+.para{
+font-size: 20px;
+}
+
+.child {
+font-size: 15px;
+```
+
+2. You can chain the .child with a selector! like `p.child` or `.para.child` **But** here it is better to chain it with `p.child` because it makes the most sense, as a .child can be any child, but it will always be a paragraph `p`.
+   For example: 
+    - There can be a `.login.child` or any other element .child, if you want to style all childs the same way you can do that, but it is probably better to style each one of them for their own purpose lika a `div.child` that targets a child of a div.
