@@ -226,12 +226,12 @@ font-size: 20px;
 </p>
 ```
 
-This would lead to making the child paragraph with font size **20px**.
-Why? Because of the [[#5. Rule Order]] the child actually takes the `.para` font size as it came in last.
+This would lead to making the child paragraph with font size **20px**. Why?
+- [[#5. Rule Order]] the child actually takes the `.para` font size as it came in last.
 
 How to fix it?
 There are 2 ways:
-1. You can make `.para` come in first 
+1. You can make `.child` come in last
 
 ```css
 .para{
@@ -242,6 +242,6 @@ font-size: 20px;
 font-size: 15px;
 ```
 
-2. You can chain the .child with a selector! like `p.child` or `.para.child` **But** here it is better to chain it with `p.child` because it makes the most sense, as a .child can be any child, but it will always be a paragraph `p`.
-   For example: 
-    - There can be a `.login.child` or any other element .child, if you want to style all childs the same way you can do that, but it is probably better to style each one of them for their own purpose lika a `div.child` that targets a child of a div.
+2. You can chain the `.child` with a selector! like `p.child` [[Introduction to CSS#Type Selectors (div, p, etc.)|(Type Selector)]] or `.para.child` [[Introduction to CSS#Class Selectors|(Class Selectors)]] **But here** it is better to chain it with `p.child` because it makes the most sense, as a .child can be any child, but it will always be a paragraph `p`.
+   If you want to style all childs the same way you can do that, but it is probably better to style each one of them for their own purpose like a a `div.child` that targets a child of a div.
+

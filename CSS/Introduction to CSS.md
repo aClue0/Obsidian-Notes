@@ -47,7 +47,7 @@ The universal selector will select elements of every type (as in the whole docum
 }
 ```
 
-### Type Selectors
+### Type Selectors (div, p, etc.)
 
 A type selector (or element selector) will select all elements of the given element type, and the syntax is just the name of the element:
 
